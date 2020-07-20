@@ -7,6 +7,7 @@ const isMac = process.platform === "darwin" ? true : false;
 // const isWindows = process.platform === "win32" ? true : false;
 
 let mainWindow;
+let aboutWindow;
 
 function createMainWindow() {
   mainWindow = new BrowserWindow({
@@ -20,6 +21,20 @@ function createMainWindow() {
 
   //   mainWindow.loadURL(`file://${__dirname}/app/index.html`);
   mainWindow.loadFile("./app/index.html");
+}
+
+function createAboutWindow() {
+  aboutWindow = new BrowserWindow({
+    title: "About ImageShrink",
+    width: 300,
+    height: 300,
+    icon: `${__dirname}/assets/icons/Icon_256x256.png`,
+    resizable: false,
+    backgroundColor: "white",
+  });
+
+  //   mainWindow.loadURL(`file://${__dirname}/app/index.html`);
+  aboutWindow.loadFile("./app/about.html");
 }
 
 // use cmd+shift+i for accessing dev tools
@@ -40,10 +55,35 @@ app.on("ready", () => {
 });
 
 const menu = [
-  ...(isMac ? [{ role: "appMenu" }] : []),
+  ...(isMac
+    ? [
+        {
+          label: app.name,
+          submenu: [
+            {
+              label: "About",
+              click: createAboutWindow,
+            },
+          ],
+        },
+      ]
+    : []),
   {
     role: "fileMenu",
   },
+  ...(!isMac
+    ? [
+        {
+          label: "Help",
+          submenu: [
+            {
+              label: "About",
+              click: createAboutWindow,
+            },
+          ],
+        },
+      ]
+    : []),
   ...(isDev
     ? [
         {
