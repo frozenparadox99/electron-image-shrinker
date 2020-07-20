@@ -4,7 +4,7 @@ process.env.NODE_ENV = "development";
 
 const isDev = process.env.NODE_ENV !== " production" ? true : false;
 const isMac = process.platform === "darwin" ? true : false;
-const isWindows = process.platform === "win32" ? true : false;
+// const isWindows = process.platform === "win32" ? true : false;
 
 let mainWindow;
 
@@ -36,21 +36,35 @@ app.on("ready", () => {
     mainWindow.toggleDevTools();
   });
 
-  mainWindow.on("ready", () => (mainWindow = null));
+  mainWindow.on("closed", () => (mainWindow = null));
 });
 
 const menu = [
   ...(isMac ? [{ role: "appMenu" }] : []),
   {
-    label: "File",
-    submenu: [
-      {
-        label: "Quit",
-        accelerator: isMac ? "Command+W" : "Ctrl+W",
-        click: () => app.quit(),
-      },
-    ],
+    role: "fileMenu",
   },
+  ...(isDev
+    ? [
+        {
+          label: "Developer",
+          submenu: [
+            {
+              role: "reload",
+            },
+            {
+              role: "forcereload",
+            },
+            {
+              type: "separator",
+            },
+            {
+              role: "toggledevtools",
+            },
+          ],
+        },
+      ]
+    : []),
 ];
 
 app.on("window-all-closed", () => {
